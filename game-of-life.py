@@ -72,7 +72,7 @@ class GameOfLife:
       t = 1 # Current time level
       write_frequency = 5 # How frequently we want to output a grid configuration.
       while t <= self.T: # Evolve!
-         print "At time level %d" % t
+         print("At time level %d" % t)
 
          # Loop over each cell of the grid and apply Conway's rules.
          for i in range(self.N):
