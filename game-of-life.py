@@ -118,12 +118,6 @@ if(__name__ == "__main__"):
    # input_array = [
    # [1,1],
    # [1,1]]
-   # default_game_of_life_rules = [
-   #    Rule(current_state = 1, maximum_live_neighbors = 2,  next_state = 0),
-   #    Rule(current_state = 1, minimum_live_neighbores = 1, maximum_live_neighbors = 4, next_state = 1),
-   #    Rule(current_state = 1, minimum_live_neighbores = 3, next_state = 0),
-   #    Rule(current_state = 0, minimum_live_neighbores = 2, maximum_live_neighbors = 4, next_state = 1),
-   # ]
    game = GameOfLife(N = 20, maximum_number_of_generation = 100, initialize_array=input_array, write_frequency = 5, rules = default_game_of_life_rules)
    game.play()
 
