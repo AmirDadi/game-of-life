@@ -17,7 +17,6 @@
 #  You should have received a copy of the GNU General Public License
 #  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import numpy
 import numpy as np
 import pylab
 import random
@@ -30,8 +29,8 @@ class GameOfLife:
       # This assumes an N*N grid of points.
       # Each point is either alive or dead, represented by integer values of 1 and 0, respectively.
       self.N = N
-      self.old_grid = numpy.zeros(N*N, dtype='i').reshape(N,N)
-      self.new_grid = numpy.zeros(N*N, dtype='i').reshape(N,N)
+      self.old_grid = np.zeros(N*N, dtype='i').reshape(N,N)
+      self.new_grid = np.zeros(N*N, dtype='i').reshape(N,N)
       self.T = T # The maximum number of generations
 
       # Set up a random initial configuration for the grid.
