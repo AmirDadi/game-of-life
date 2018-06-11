@@ -24,17 +24,14 @@ from scipy.ndimage import convolve
 
 class GameOfLife:
 
-   def __init__(self, N=100, T=200, initialize_array=[]):
-      """ Set up Conway's Game of Life. """
-      # Here we create two grids to hold the old and new configurations.
-      # This assumes an N*N grid of points.
-      # Each point is either alive or dead, represented by integer values of 1 and 0, respectively.
+   def __init__(self, N=100, maximum_number_of_generation=200, initialize_array=[]):
+    
       self.N = N
       self.old_grid = np.zeros(N*N, dtype='i').reshape(N,N)
       self.new_grid = np.zeros(N*N, dtype='i').reshape(N,N)
-      self.T = T # The maximum number of generations
+      self.maximum_number_of_generatioh = maximum_number_of_generation # The maximum number of generations
       self.iteration = 0
-      # Set up a random initial configuration for the grid.
+      # Set up a random initial configuration for the grid if no input is given
       if (np.array(initialize_array).size == 0):
          for i in range(0, self.N):
             for j in range(0, self.N):
@@ -75,31 +72,27 @@ class GameOfLife:
          self.new_grid[i][j] = 1 # Alive from reproduction.
 
    def play(self):
-      """ Play Conway's Game of Life. """
 
-      # Write the initial configuration to file.
       self.plot()
       
-      self.iteration = 1 # Current time level
-      write_frequency = 5 # How frequently we want to output a grid configuration.
-      while self.iteration <= self.T: # Evolve!
+      self.iteration = 1 
+      write_frequency = 5 
+      while self.iteration <= self.maximum_number_of_generation: 
          print("At time level %d" % self.iteration)
 
-         # Loop over each cell of the grid and apply Conway's rules.
+         
          self.neighbours = self.live_neighbours()
          for i in range(self.N):
             for j in range(self.N):
                self.apply_default_rules_on_element(i, j)
                         
 
-         # Output the new configuration.
+         
          if(self.iteration % write_frequency == 0):
             self.plot()
 
-         # The new configuration becomes the old configuration for the next generation.
          self.old_grid = self.new_grid.copy()
 
-         # Move on to the next time level
          self.iteration += 1
 
 if(__name__ == "__main__"):
