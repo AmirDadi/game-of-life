@@ -18,12 +18,13 @@
 #  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import numpy
+import numpy as np
 import pylab
 import random
 
 class GameOfLife:
 
-   def __init__(self, N=100, T=200):
+   def __init__(self, N=100, T=200, initialize_array=[]):
       """ Set up Conway's Game of Life. """
       # Here we create two grids to hold the old and new configurations.
       # This assumes an N*N grid of points.
@@ -34,12 +35,20 @@ class GameOfLife:
       self.T = T # The maximum number of generations
 
       # Set up a random initial configuration for the grid.
-      for i in range(0, self.N):
-         for j in range(0, self.N):
-            if(random.randint(0, 100) < 15):
-               self.old_grid[i][j] = 1
-            else:
-               self.old_grid[i][j] = 0
+      if (np.array(initialize_array).size == 0):
+         for i in range(0, self.N):
+            for j in range(0, self.N):
+               if(random.randint(0, 100) < 15):
+                  self.old_grid[i][j] = 1
+               else:
+                  self.old_grid[i][j] = 0
+      else:
+         shape = np.shape(initialize_array)
+         old_grid_start_x = int(np.ceil(N/2) - np.ceil(shape[0]/2))
+         old_grid_end_x = int(np.ceil(N/2) + np.ceil(shape[0]/2)-1)
+         old_grid_start_y = int(np.ceil(N/2) - np.ceil(shape[1]/2))
+         old_grid_end_y = int(np.ceil(N/2) + np.ceil(shape[1]/2)-1)
+         self.old_grid[old_grid_start_x:old_grid_end_x,old_grid_start_y:old_grid_end_y]=input_array
       
    def live_neighbours(self, i, j):
       """ Count the number of live neighbours around point (i, j). """
@@ -99,6 +108,11 @@ class GameOfLife:
          t += 1
 
 if(__name__ == "__main__"):
-   game = GameOfLife(N = 100, T = 200)
+   input_array = [
+      [1, 1, 1, 1, 1, 0, 0],
+      [1, 0, 1, 0, 0, 0, 1],
+      [1, 1, 1, 0, 1, 0, 1],
+   ]
+   game = GameOfLife(N = 20, T = 200, input_array=input_array)
    game.play()
 
