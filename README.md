@@ -13,7 +13,7 @@
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-Game of Life
+Game of Life Simulator
 ============
 
 An implementation of Conway's Game of Life (A cellular automata) in Python, used in a programming class for demonstration purposes.
