@@ -32,7 +32,7 @@ class GameOfLife:
       self.old_grid = np.zeros(N*N, dtype='i').reshape(N,N)
       self.new_grid = np.zeros(N*N, dtype='i').reshape(N,N)
       self.T = T # The maximum number of generations
-
+      self.iteration = 0
       # Set up a random initial configuration for the grid.
       if (np.array(initialize_array).size == 0):
          for i in range(0, self.N):
@@ -49,6 +49,12 @@ class GameOfLife:
          old_grid_end_y = int(np.ceil(N/2) + np.ceil(shape[1]/2)-1)
          self.old_grid[old_grid_start_x:old_grid_end_x, old_grid_start_y:old_grid_end_y]=initialize_array
       
+   def plot(self):
+      pylab.pcolormesh(self.old_grid, cmap="gray_r",
+                           edgecolors='cadetblue', linewidths=0.1)
+      pylab.colorbar()
+      pylab.savefig("generation%d.png" % self.iteration)
+
    def live_neighbours(self, i, j):
       """ Count the number of live neighbours around point (i, j). """
       s = 0 # The total number of live neighbours.
@@ -73,14 +79,14 @@ class GameOfLife:
       """ Play Conway's Game of Life. """
 
       # Write the initial configuration to file.
-      pylab.pcolormesh(self.old_grid)
-      pylab.colorbar()
+      self.plot()
+      
       pylab.savefig("generation0.png")
 
-      t = 1 # Current time level
+      self.iteration = 1 # Current time level
       write_frequency = 5 # How frequently we want to output a grid configuration.
-      while t <= self.T: # Evolve!
-         print("At time level %d" % t)
+      while self.iteration <= self.T: # Evolve!
+         print("At time level %d" % self.iteration)
 
          # Loop over each cell of the grid and apply Conway's rules.
          for i in range(self.N):
@@ -96,15 +102,14 @@ class GameOfLife:
                   self.new_grid[i][j] = 1 # Alive from reproduction.
 
          # Output the new configuration.
-         if(t % write_frequency == 0):
-            pylab.pcolormesh(self.new_grid)
-            pylab.savefig("generation%d.png" % t)
+         if(self.iteration % write_frequency == 0):
+            self.plot()
 
          # The new configuration becomes the old configuration for the next generation.
          self.old_grid = self.new_grid.copy()
 
          # Move on to the next time level
-         t += 1
+         self.iteration += 1
 
 if(__name__ == "__main__"):
    input_array = [
@@ -112,6 +117,6 @@ if(__name__ == "__main__"):
       [1, 0, 1, 0, 0, 0, 1],
       [1, 1, 1, 0, 1, 0, 1],
    ]
-   game = GameOfLife(N = 20, T = 200, input_array=input_array)
+   game = GameOfLife(N = 20, T = 200, initialize_array=input_array)
    game.play()
 
