@@ -64,7 +64,16 @@ class GameOfLife:
                      [1, 1, 1]])
       return convolve(self.old_grid, kernel, mode='constant')
 
-   # def apply_rules(self):
+   def apply_default_rules_on_element(self, i, j):
+      live = self.neighbours[i][j]
+      if(self.old_grid[i][j] == 1 and  live < 2):
+         self.new_grid[i][j] = 0 # Dead from starvation.
+      elif(self.old_grid[i][j] == 1 and (live == 2 or live == 3)):
+         self.new_grid[i][j] = 1 # Continue living.
+      elif(self.old_grid[i][j] == 1 and live > 3):
+         self.new_grid[i][j] = 0 # Dead from overcrowding.
+      elif(self.old_grid[i][j] == 0 and live == 3):
+         self.new_grid[i][j] = 1 # Alive from reproduction.
 
    def play(self):
       """ Play Conway's Game of Life. """
@@ -81,15 +90,8 @@ class GameOfLife:
          self.neighbours = self.live_neighbours()
          for i in range(self.N):
             for j in range(self.N):
-               live = self.neighbours[i][j]
-               if(self.old_grid[i][j] == 1 and  live < 2):
-                  self.new_grid[i][j] = 0 # Dead from starvation.
-               elif(self.old_grid[i][j] == 1 and (live == 2 or live == 3)):
-                  self.new_grid[i][j] = 1 # Continue living.
-               elif(self.old_grid[i][j] == 1 and live > 3):
-                  self.new_grid[i][j] = 0 # Dead from overcrowding.
-               elif(self.old_grid[i][j] == 0 and live == 3):
-                  self.new_grid[i][j] = 1 # Alive from reproduction.
+               self.apply_default_rules_on_element(i, j)
+               
 
          # Output the new configuration.
          if(self.iteration % write_frequency == 0):
