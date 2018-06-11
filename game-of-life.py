@@ -55,7 +55,6 @@ class GameOfLife:
    def plot(self):
       pylab.pcolormesh(self.old_grid, cmap="gray_r",
                            edgecolors='cadetblue', linewidths=0.1)
-      pylab.colorbar()
       pylab.savefig("generation%d.png" % self.iteration)
 
    def live_neighbours(self):
@@ -91,7 +90,7 @@ class GameOfLife:
          for i in range(self.N):
             for j in range(self.N):
                self.apply_default_rules_on_element(i, j)
-               
+                        
 
          # Output the new configuration.
          if(self.iteration % write_frequency == 0):
