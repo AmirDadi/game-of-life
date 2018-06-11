@@ -47,7 +47,7 @@ class GameOfLife:
          old_grid_end_x = int(np.ceil(N/2) + np.ceil(shape[0]/2)-1)
          old_grid_start_y = int(np.ceil(N/2) - np.ceil(shape[1]/2))
          old_grid_end_y = int(np.ceil(N/2) + np.ceil(shape[1]/2)-1)
-         self.old_grid[old_grid_start_x:old_grid_end_x,old_grid_start_y:old_grid_end_y]=input_array
+         self.old_grid[old_grid_start_x:old_grid_end_x, old_grid_start_y:old_grid_end_y]=initialize_array
       
    def live_neighbours(self, i, j):
       """ Count the number of live neighbours around point (i, j). """
