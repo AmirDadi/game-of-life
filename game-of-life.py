@@ -22,15 +22,31 @@ import pylab
 import random
 from scipy.ndimage import convolve
 
+class Rule:
+   def __init__(self, current_state = 0, minimum_live_neighbores=-1, maximum_live_neighbors=np.iinfo(np.int32).max, probability=1, next_state=1):
+      self.current_state = current_state
+      self.minimum_live_neighbores = minimum_live_neighbores
+      self.maximum_live_neighbors = maximum_live_neighbors
+      self.probability = probability
+      self.next_state = next_state
+
+default_game_of_life_rules = [
+      Rule(current_state = 1, maximum_live_neighbors = 2,  next_state = 0),
+      Rule(current_state = 1, minimum_live_neighbores = 1, maximum_live_neighbors = 4, next_state = 1),
+      Rule(current_state = 1, minimum_live_neighbores = 3, next_state = 0),
+      Rule(current_state = 0, minimum_live_neighbores = 2, maximum_live_neighbors = 4, next_state = 1),     
+   ]
+
 class GameOfLife:
 
-   def __init__(self, N=100, maximum_number_of_generation=200, initialize_array=[], write_frequency = 5):
+   def __init__(self, N=100, maximum_number_of_generation=200, initialize_array=[], write_frequency = 5, rules=default_game_of_life_rules):
     
       self.N = N
       self.grid = np.zeros(N*N, dtype='i').reshape(N,N)
-      self.write_frequency = 5
+      self.write_frequency = write_frequency
       self.maximum_number_of_generation = maximum_number_of_generation 
       self.iteration = 0
+      self.rules = rules
       # Set up a random initial configuration for the grid if no input is given
       if (np.array(initialize_array).size == 0):
          for i in range(0, self.N):
@@ -52,7 +68,7 @@ class GameOfLife:
    def plot(self):
       pylab.pcolormesh(self.grid, cmap="gray_r",
                            edgecolors='cadetblue', linewidths=0.1)
-      pylab.savefig("generation%d.png" % self.iteration)
+      pylab.savefig("xgeneration%d.png" % self.iteration)
 
    def live_neighbours(self):
       kernel = np.array([ [1, 1, 1],
@@ -62,6 +78,15 @@ class GameOfLife:
 
    def apply_default_rules_on_element(self, i, j):
       live = self.neighbours[i][j]
+      for rule in self.rules:
+         if (self.grid[i][j] == rule.current_state and
+            live < rule.maximum_live_neighbors and
+            live > rule.minimum_live_neighbores):      
+            self.grid[i][j] = rule.next_state
+            return
+
+   def apply_probabilistic_rules_on_element(self, i, j):
+      live = self.neighbours[i][j]
       if(self.grid[i][j] == 1 and  live < 2):
          self.grid[i][j] = 0 # Dead from starvation.
       elif(self.grid[i][j] == 1 and (live == 2 or live == 3)):
@@ -70,6 +95,7 @@ class GameOfLife:
          self.grid[i][j] = 0 # Dead from overcrowding.
       elif(self.grid[i][j] == 0 and live == 3):
          self.grid[i][j] = 1 # Alive from reproduction.
+         
 
    def play(self):
 
@@ -92,6 +118,9 @@ class GameOfLife:
 
          self.iteration += 1
 
+
+
+
 if(__name__ == "__main__"):
    input_array = [
       [1, 1, 1, 1, 1, 0, 0],
@@ -101,6 +130,12 @@ if(__name__ == "__main__"):
    # input_array = [
    # [1,1],
    # [1,1]]
-   game = GameOfLife(N = 20, maximum_number_of_generation = 200, initialize_array=input_array, write_frequency = 5)
+   # default_game_of_life_rules = [
+   #    Rule(current_state = 1, maximum_live_neighbors = 2,  next_state = 0),
+   #    Rule(current_state = 1, minimum_live_neighbores = 1, maximum_live_neighbors = 4, next_state = 1),
+   #    Rule(current_state = 1, minimum_live_neighbores = 3, next_state = 0),
+   #    Rule(current_state = 0, minimum_live_neighbores = 2, maximum_live_neighbors = 4, next_state = 1),
+   # ]
+   game = GameOfLife(N = 20, maximum_number_of_generation = 100, initialize_array=input_array, write_frequency = 5, rules = default_game_of_life_rules)
    game.play()
 
