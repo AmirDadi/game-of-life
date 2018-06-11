@@ -24,32 +24,33 @@ from scipy.ndimage import convolve
 
 class GameOfLife:
 
-   def __init__(self, N=100, maximum_number_of_generation=200, initialize_array=[]):
+   def __init__(self, N=100, maximum_number_of_generation=200, initialize_array=[], write_frequency = 5):
     
       self.N = N
-      self.old_grid = np.zeros(N*N, dtype='i').reshape(N,N)
-      self.maximum_number_of_generation = maximum_number_of_generation # The maximum number of generations
+      self.grid = np.zeros(N*N, dtype='i').reshape(N,N)
+      self.write_frequency = 5
+      self.maximum_number_of_generation = maximum_number_of_generation 
       self.iteration = 0
       # Set up a random initial configuration for the grid if no input is given
       if (np.array(initialize_array).size == 0):
          for i in range(0, self.N):
             for j in range(0, self.N):
                if(random.randint(0, 100) < 15):
-                  self.old_grid[i][j] = 1
+                  self.grid[i][j] = 1
                else:
-                  self.old_grid[i][j] = 0
+                  self.grid[i][j] = 0
       else:
          shape = np.shape(initialize_array)
-         old_grid_start_x = int(np.ceil(N/2) - np.ceil(shape[0]/2))
-         old_grid_end_x = old_grid_start_x + shape[0]
-         old_grid_start_y = int(np.ceil(N/2) - np.ceil(shape[1]/2))
-         old_grid_end_y = old_grid_start_y + shape[1]
-         self.old_grid[old_grid_start_x:old_grid_end_x, old_grid_start_y:old_grid_end_y]=initialize_array
+         grid_start_x = int(np.ceil(N/2) - np.ceil(shape[0]/2))
+         grid_end_x = grid_start_x + shape[0]
+         grid_start_y = int(np.ceil(N/2) - np.ceil(shape[1]/2))
+         grid_end_y = grid_start_y + shape[1]
+         self.grid[grid_start_x:grid_end_x, grid_start_y:grid_end_y] = initialize_array
 
       self.neighbours = self.live_neighbours()
 
    def plot(self):
-      pylab.pcolormesh(self.old_grid, cmap="gray_r",
+      pylab.pcolormesh(self.grid, cmap="gray_r",
                            edgecolors='cadetblue', linewidths=0.1)
       pylab.savefig("generation%d.png" % self.iteration)
 
@@ -57,25 +58,24 @@ class GameOfLife:
       kernel = np.array([ [1, 1, 1],
                      [1, 0, 1],
                      [1, 1, 1]])
-      return convolve(self.old_grid, kernel, mode='constant')
+      return convolve(self.grid, kernel, mode='constant')
 
    def apply_default_rules_on_element(self, i, j):
       live = self.neighbours[i][j]
-      if(self.old_grid[i][j] == 1 and  live < 2):
-         self.old_grid[i][j] = 0 # Dead from starvation.
-      elif(self.old_grid[i][j] == 1 and (live == 2 or live == 3)):
-         self.old_grid[i][j] = 1 # Continue living.
-      elif(self.old_grid[i][j] == 1 and live > 3):
-         self.old_grid[i][j] = 0 # Dead from overcrowding.
-      elif(self.old_grid[i][j] == 0 and live == 3):
-         self.old_grid[i][j] = 1 # Alive from reproduction.
+      if(self.grid[i][j] == 1 and  live < 2):
+         self.grid[i][j] = 0 # Dead from starvation.
+      elif(self.grid[i][j] == 1 and (live == 2 or live == 3)):
+         self.grid[i][j] = 1 # Continue living.
+      elif(self.grid[i][j] == 1 and live > 3):
+         self.grid[i][j] = 0 # Dead from overcrowding.
+      elif(self.grid[i][j] == 0 and live == 3):
+         self.grid[i][j] = 1 # Alive from reproduction.
 
    def play(self):
 
       self.plot()
       
       self.iteration = 1 
-      write_frequency = 5 
       while self.iteration <= self.maximum_number_of_generation: 
          print("At time level %d" % self.iteration)
 
@@ -87,7 +87,7 @@ class GameOfLife:
                         
 
          
-         if(self.iteration % write_frequency == 0):
+         if(self.iteration % self.write_frequency == 0):
             self.plot()
 
          self.iteration += 1
@@ -101,6 +101,6 @@ if(__name__ == "__main__"):
    # input_array = [
    # [1,1],
    # [1,1]]
-   game = GameOfLife(N = 20, maximum_number_of_generation = 200, initialize_array=input_array)
+   game = GameOfLife(N = 20, maximum_number_of_generation = 200, initialize_array=input_array, write_frequency = 5)
    game.play()
 
