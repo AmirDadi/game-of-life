@@ -20,6 +20,7 @@
 import numpy as np
 import pylab
 import random
+from scipy.ndimage import convolve
 
 class GameOfLife:
 
@@ -48,32 +49,22 @@ class GameOfLife:
          old_grid_start_y = int(np.ceil(N/2) - np.ceil(shape[1]/2))
          old_grid_end_y = int(np.ceil(N/2) + np.ceil(shape[1]/2)-1)
          self.old_grid[old_grid_start_x:old_grid_end_x, old_grid_start_y:old_grid_end_y]=initialize_array
-      
+
+      self.neighbours = self.live_neighbours()
+
    def plot(self):
       pylab.pcolormesh(self.old_grid, cmap="gray_r",
                            edgecolors='cadetblue', linewidths=0.1)
       pylab.colorbar()
       pylab.savefig("generation%d.png" % self.iteration)
 
-   def live_neighbours(self, i, j):
-      """ Count the number of live neighbours around point (i, j). """
-      s = 0 # The total number of live neighbours.
-      # Loop over all the neighbours.
-      for x in [i-1, i, i+1]:
-         for y in [j-1, j, j+1]:
-            if(x == i and y == j):
-               continue # Skip the current point itself - we only want to count the neighbours!
-            if(x != self.N and y != self.N):
-               s += self.old_grid[x][y]
-            # The remaining branches handle the case where the neighbour is off the end of the grid.
-            # In this case, we loop back round such that the grid becomes a "toroidal array".
-            elif(x == self.N and y != self.N):
-               s += self.old_grid[0][y]
-            elif(x != self.N and y == self.N):
-               s += self.old_grid[x][0]
-            else:
-               s += self.old_grid[0][0]
-      return s
+   def live_neighbours(self):
+      kernel = np.array([ [1, 1, 1],
+                     [1, 0, 1],
+                     [1, 1, 1]])
+      return convolve(self.old_grid, kernel, mode='constant')
+
+   # def apply_rules(self):
 
    def play(self):
       """ Play Conway's Game of Life. """
@@ -81,18 +72,17 @@ class GameOfLife:
       # Write the initial configuration to file.
       self.plot()
       
-      pylab.savefig("generation0.png")
-
       self.iteration = 1 # Current time level
       write_frequency = 5 # How frequently we want to output a grid configuration.
       while self.iteration <= self.T: # Evolve!
          print("At time level %d" % self.iteration)
 
          # Loop over each cell of the grid and apply Conway's rules.
+         self.neighbours = self.live_neighbours()
          for i in range(self.N):
             for j in range(self.N):
-               live = self.live_neighbours(i, j)
-               if(self.old_grid[i][j] == 1 and live < 2):
+               live = self.neighbours[i][j]
+               if(self.old_grid[i][j] == 1 and  live < 2):
                   self.new_grid[i][j] = 0 # Dead from starvation.
                elif(self.old_grid[i][j] == 1 and (live == 2 or live == 3)):
                   self.new_grid[i][j] = 1 # Continue living.
