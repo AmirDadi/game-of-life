@@ -16,5 +16,7 @@
 Game of Life
 ============
 
-An implementation of Conway's Game of Life in Python, used in a programming class for demonstration purposes.
+An implementation of Conway's Game of Life (A cellular automata) in Python, used in a programming class for demonstration purposes.
+
+Some refactor has been done on the code and Rule class added to be able to define new rules and test the model. You can define birth, survival and death rules by live neighbors conditions and also probability to go to a new state.
 
