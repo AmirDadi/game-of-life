@@ -68,7 +68,7 @@ class GameOfLife:
    def plot(self):
       pylab.pcolormesh(self.grid, cmap="gray_r",
                            edgecolors='cadetblue', linewidths=0.1)
-      pylab.savefig("xgeneration%d.png" % self.iteration)
+      pylab.savefig("generation%d.png" % self.iteration)
 
    def live_neighbours(self):
       kernel = np.array([ [1, 1, 1],
@@ -76,7 +76,7 @@ class GameOfLife:
                      [1, 1, 1]])
       return convolve(self.grid, kernel, mode='constant')
 
-   def apply_default_rules_on_element(self, i, j):
+   def apply_rules_on_element(self, i, j):
       live = self.neighbours[i][j]
       for rule in self.rules:
          if (self.grid[i][j] == rule.current_state and
@@ -84,18 +84,6 @@ class GameOfLife:
             live > rule.minimum_live_neighbores) and np.random.rand() < rule.probability:      
             self.grid[i][j] = rule.next_state
             return
-
-   def apply_probabilistic_rules_on_element(self, i, j):
-      live = self.neighbours[i][j]
-      if(self.grid[i][j] == 1 and  live < 2):
-         self.grid[i][j] = 0 # Dead from starvation.
-      elif(self.grid[i][j] == 1 and (live == 2 or live == 3)):
-         self.grid[i][j] = 1 # Continue living.
-      elif(self.grid[i][j] == 1 and live > 3):
-         self.grid[i][j] = 0 # Dead from overcrowding.
-      elif(self.grid[i][j] == 0 and live == 3):
-         self.grid[i][j] = 1 # Alive from reproduction.
-         
 
    def play(self):
 
@@ -109,7 +97,7 @@ class GameOfLife:
          self.neighbours = self.live_neighbours()
          for i in range(self.N):
             for j in range(self.N):
-               self.apply_default_rules_on_element(i, j)
+               self.apply_rules_on_element(i, j)
                         
 
          
