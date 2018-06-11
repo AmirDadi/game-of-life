@@ -81,7 +81,7 @@ class GameOfLife:
       for rule in self.rules:
          if (self.grid[i][j] == rule.current_state and
             live < rule.maximum_live_neighbors and
-            live > rule.minimum_live_neighbores):      
+            live > rule.minimum_live_neighbores) and np.random.rand() < rule.probability:      
             self.grid[i][j] = rule.next_state
             return
 
