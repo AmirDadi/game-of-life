@@ -28,8 +28,7 @@ class GameOfLife:
     
       self.N = N
       self.old_grid = np.zeros(N*N, dtype='i').reshape(N,N)
-      self.new_grid = np.zeros(N*N, dtype='i').reshape(N,N)
-      self.maximum_number_of_generatioh = maximum_number_of_generation # The maximum number of generations
+      self.maximum_number_of_generation = maximum_number_of_generation # The maximum number of generations
       self.iteration = 0
       # Set up a random initial configuration for the grid if no input is given
       if (np.array(initialize_array).size == 0):
@@ -42,9 +41,9 @@ class GameOfLife:
       else:
          shape = np.shape(initialize_array)
          old_grid_start_x = int(np.ceil(N/2) - np.ceil(shape[0]/2))
-         old_grid_end_x = int(np.ceil(N/2) + np.ceil(shape[0]/2)-1)
+         old_grid_end_x = old_grid_start_x + shape[0]
          old_grid_start_y = int(np.ceil(N/2) - np.ceil(shape[1]/2))
-         old_grid_end_y = int(np.ceil(N/2) + np.ceil(shape[1]/2)-1)
+         old_grid_end_y = old_grid_start_y + shape[1]
          self.old_grid[old_grid_start_x:old_grid_end_x, old_grid_start_y:old_grid_end_y]=initialize_array
 
       self.neighbours = self.live_neighbours()
@@ -63,13 +62,13 @@ class GameOfLife:
    def apply_default_rules_on_element(self, i, j):
       live = self.neighbours[i][j]
       if(self.old_grid[i][j] == 1 and  live < 2):
-         self.new_grid[i][j] = 0 # Dead from starvation.
+         self.old_grid[i][j] = 0 # Dead from starvation.
       elif(self.old_grid[i][j] == 1 and (live == 2 or live == 3)):
-         self.new_grid[i][j] = 1 # Continue living.
+         self.old_grid[i][j] = 1 # Continue living.
       elif(self.old_grid[i][j] == 1 and live > 3):
-         self.new_grid[i][j] = 0 # Dead from overcrowding.
+         self.old_grid[i][j] = 0 # Dead from overcrowding.
       elif(self.old_grid[i][j] == 0 and live == 3):
-         self.new_grid[i][j] = 1 # Alive from reproduction.
+         self.old_grid[i][j] = 1 # Alive from reproduction.
 
    def play(self):
 
@@ -91,8 +90,6 @@ class GameOfLife:
          if(self.iteration % write_frequency == 0):
             self.plot()
 
-         self.old_grid = self.new_grid.copy()
-
          self.iteration += 1
 
 if(__name__ == "__main__"):
@@ -101,6 +98,9 @@ if(__name__ == "__main__"):
       [1, 0, 1, 0, 0, 0, 1],
       [1, 1, 1, 0, 1, 0, 1],
    ]
-   game = GameOfLife(N = 20, T = 200, initialize_array=input_array)
+   # input_array = [
+   # [1,1],
+   # [1,1]]
+   game = GameOfLife(N = 20, maximum_number_of_generation = 200, initialize_array=input_array)
    game.play()
 
